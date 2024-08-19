@@ -1,0 +1,1 @@
+"numpy"  "Pillow"  "PyQt5" 
