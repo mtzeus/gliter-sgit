@@ -1,4 +1,5 @@
 # Gliter 1.0 - Glitch Image Tool
+Para garantir a compatibilidade e a melhor experiência, é recomendável usar a versão mais recente do Python 3.x disponível.
 
 ---
 
