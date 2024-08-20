@@ -17,9 +17,10 @@ Para garantir a compatibilidade e a melhor experiência, é recomendável usar a
 1. Clone:
 
    git clone https://github.com/mtzeus/gliter-sgit.git
+   
    cd gliter-sgit
 
-2. Install Requirements:
+3. Install Requirements:
 
   pip install -r requirements.txt
 
