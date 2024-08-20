@@ -1,36 +1,57 @@
-
-#
-#
-#
-# WELCOME TO GLITER 1.0 - GLITCH IMAGE TOOL #
-# THIS PROGRAM WAS MADE WITH CHATGPT TO HELP PEOPLE CREATE WITHOUT LIMITS #
-# MAY THE ART CREATED WITH THIS PROGRAM BRING PEACE TO THIS DOOMED WORLD #
-# MADE IN BRASIL :D
-#
-#
-#
-
-
-
-
 import sys
 import random
 import io
 import numpy as np
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QVBoxLayout,
-    QWidget, QComboBox, QProgressBar, QHBoxLayout, QSlider, QScrollArea
+    QWidget, QComboBox, QProgressBar, QHBoxLayout, QSlider, QScrollArea, QDialog
 )
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
 from PIL import Image
+
+class AboutDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("About GLITER 1.0")
+        self.setGeometry(200, 200, 300, 300)  # Adjusted size to fit additional content
+        self.initUI()
+    
+    def initUI(self):
+        layout = QVBoxLayout()
+        
+        # Application information
+        about_text = (
+            "<b>GLITER 1.0 - GLITCH IMAGE TOOL</b><br><br>"
+            "Developed by mtz in collaboration with ChatGPT.<br>"
+            "Version: 1.0.2<br><br>"
+            "TO HELP PEOPLE CREATE WITHOUT LIMITS.<br><br>"
+            "MAY THE ART CREATED WITH THIS PROGRAM BRING PEACE TO THIS DOOMED WORLD<br><br>"
+            "MADE IN BRASIL :D<br><br>"
+            "Follow:<br>"
+            '<a href="https://x.com/mtz_treze">Twitter: @mtz.treze</a><br>'
+            '<a href="https://www.instagram.com/empty.mtz">Instagram: @empty.mtz</a><br>'
+        )
+        
+        about_label = QLabel(about_text, self)
+        about_label.setWordWrap(True)
+        about_label.setOpenExternalLinks(True)  # Allow links to be clickable
+        
+        layout.addWidget(about_label)
+        
+        # Close button
+        close_button = QPushButton("Close", self)
+        close_button.clicked.connect(self.close)
+        layout.addWidget(close_button)
+        
+        self.setLayout(layout)
 
 class GlitchArtApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.dark_mode = True
         self.initUI()   
-        
+    
     def initUI(self):
         self.setWindowTitle('GLITER 1.0 - GLITCH IMAGE TOOL.')
         self.setGeometry(100, 100, 570, 640)
@@ -54,10 +75,9 @@ class GlitchArtApp(QMainWindow):
         effect_layout = QHBoxLayout()
         self.effect_selector = QComboBox(self)
         self.effect_selector.addItems([
-            "Simple Glitch", "Data Corruption", "Color Shift", "Pixel Shuffle", "Line Glitch",
-            "Vertical Glitch", "Horizontal Glitch", "Static Noise", "Color Inversion",
-            "Mirror Glitch", "Data Fragmentation", "Image Distortion", "Vertical Bars Glitch",
-            "Horizontal Bars Glitch", "Random Pixelation"
+            "Simple Glitch", "Data Corruption", "Line Glitch",
+            "Static Noise", "Data Fragmentation", "Image Distortion",
+            "Random Pixelation", "RGB Shift", "Wave Distortion", "Glitch Strips"
         ])
         effect_layout.addWidget(self.effect_selector)
         
@@ -96,6 +116,11 @@ class GlitchArtApp(QMainWindow):
         self.theme_toggle_button.clicked.connect(self.toggle_theme)
         button_layout.addWidget(self.theme_toggle_button)
         
+        # About button
+        self.about_button = QPushButton('About', self)
+        self.about_button.clicked.connect(self.show_about_dialog)
+        button_layout.addWidget(self.about_button)
+        
         # Add effects and buttons to layout
         main_layout.addLayout(effect_layout)
         main_layout.addLayout(button_layout)
@@ -104,6 +129,10 @@ class GlitchArtApp(QMainWindow):
         container = QWidget()
         container.setLayout(main_layout)
         self.setCentralWidget(container)
+    
+    def show_about_dialog(self):
+        dialog = AboutDialog()
+        dialog.exec_()
     
     def load_image(self):
         try:
@@ -123,42 +152,32 @@ class GlitchArtApp(QMainWindow):
                 intensity = self.intensity_slider.value()
                 
                 # Apply the selected glitch effect
-                if selected_effect == "Simple Glitch":
-                    glitched_image = self.simple_glitch(self.original_image.copy(), intensity)
-                elif selected_effect == "Data Corruption":
-                    glitched_image = self.data_corruption(self.original_image.copy(), intensity)
-                elif selected_effect == "Color Shift":
-                    glitched_image = self.color_shift(self.original_image.copy())
-                elif selected_effect == "Pixel Shuffle":
-                    glitched_image = self.pixel_shuffle(self.original_image.copy())
-                elif selected_effect == "Line Glitch":
-                    glitched_image = self.line_glitch(self.original_image.copy(), intensity)
-                elif selected_effect == "Vertical Glitch":
-                    glitched_image = self.vertical_glitch(self.original_image.copy(), intensity)
-                elif selected_effect == "Horizontal Glitch":
-                    glitched_image = self.horizontal_glitch(self.original_image.copy(), intensity)
-                elif selected_effect == "Static Noise":
-                    glitched_image = self.static_noise(self.original_image.copy(), intensity)
-                elif selected_effect == "Color Inversion":
-                    glitched_image = self.color_inversion(self.original_image.copy())
-                elif selected_effect == "Mirror Glitch":
-                    glitched_image = self.mirror_glitch(self.original_image.copy(), intensity)
-                elif selected_effect == "Data Fragmentation":
-                    glitched_image = self.data_fragmentation(self.original_image.copy(), intensity)
-                elif selected_effect == "Image Distortion":
-                    glitched_image = self.image_distortion(self.original_image.copy(), intensity)
-                elif selected_effect == "Vertical Bars Glitch":
-                    glitched_image = self.glitch_vertical_bars(self.original_image.copy(), intensity)
-                elif selected_effect == "Horizontal Bars Glitch":
-                    glitched_image = self.glitch_horizontal_bars(self.original_image.copy(), intensity)
-                elif selected_effect == "Random Pixelation":
-                    glitched_image = self.random_pixelation(self.original_image.copy(), intensity)
+                glitched_image = self.apply_effect(self.original_image.copy(), selected_effect, intensity)
                 
                 self.display_image(glitched_image)
                 self.save_button.setEnabled(True)  # Enable the save button
                 self.glitched_image = glitched_image  # Store the glitched image
         except Exception as e:
             self.image_widget.setText(f"Failed to apply glitch: {str(e)}")
+    
+    def apply_effect(self, image, effect_name, intensity):
+        effects = {
+            "Simple Glitch": self.simple_glitch,
+            "Data Corruption": self.data_corruption,
+            #"Color Shift": self.color_shift,
+            "Line Glitch": self.line_glitch,
+            "Static Noise": self.static_noise,
+            "Data Fragmentation": self.data_fragmentation,
+            "Image Distortion": self.image_distortion,
+            "Random Pixelation": self.random_pixelation,
+            "RGB Shift": self.rgb_shift,
+            "Wave Distortion": self.wave_distortion,
+            "Glitch Strips": self.glitch_strips
+        }
+        
+        if effect_name in effects:
+            return effects[effect_name](image, intensity)
+        return image
     
     def save_image(self):
         try:
@@ -186,8 +205,7 @@ class GlitchArtApp(QMainWindow):
         except Exception as e:
             self.image_widget.setText(f"Failed to display image: {str(e)}")
     
-    # Effect implementations here...
-    
+    # Effect implementations
     def simple_glitch(self, image, intensity):
         np_image = np.array(image)
         height, width, _ = np_image.shape
@@ -206,18 +224,9 @@ class GlitchArtApp(QMainWindow):
                     np_image[j, i] = [random.randint(0, 255) for _ in range(3)]
         return Image.fromarray(np_image)
     
-    def color_shift(self, image):
+    #def color_shift(self, image):
         np_image = np.array(image)
         np_image = np_image[..., [2, 0, 1]]  # Shift colors from RGB to BGR
-        return Image.fromarray(np_image)
-    
-    def pixel_shuffle(self, image):
-        np_image = np.array(image)
-        height, width, _ = np_image.shape
-        indices = [(x, y) for x in range(width) for y in range(height)]
-        random.shuffle(indices)
-        for (x1, y1), (x2, y2) in zip(indices[::2], indices[1::2]):
-            np_image[y1, x1], np_image[y2, x2] = np_image[y2, x2], np_image[y1, x1]
         return Image.fromarray(np_image)
     
     def line_glitch(self, image, intensity):
@@ -229,41 +238,10 @@ class GlitchArtApp(QMainWindow):
                 np_image[i] = np.roll(np_image[i], offset, axis=0)
         return Image.fromarray(np_image)
     
-    def vertical_glitch(self, image, intensity):
-        np_image = np.array(image)
-        width = np_image.shape[1]
-        for i in range(width):
-            if random.random() > (1 - intensity / 100.0):
-                offset = random.randint(-width // 10, width // 10)
-                np_image[:, i] = np.roll(np_image[:, i], offset, axis=0)
-        return Image.fromarray(np_image)
-    
-    def horizontal_glitch(self, image, intensity):
-        np_image = np.array(image)
-        height = np_image.shape[0]
-        for i in range(height):
-            if random.random() > (1 - intensity / 100.0):
-                offset = random.randint(-height // 10, height // 10)
-                np_image[i] = np.roll(np_image[i], offset, axis=0)
-        return Image.fromarray(np_image)
-    
     def static_noise(self, image, intensity):
         np_image = np.array(image)
         noise = np.random.normal(0, intensity, np_image.shape)
         np_image = np.clip(np_image + noise, 0, 255).astype(np.uint8)
-        return Image.fromarray(np_image)
-    
-    def color_inversion(self, image):
-        np_image = np.array(image)
-        np_image = 255 - np_image
-        return Image.fromarray(np_image)
-    
-    def mirror_glitch(self, image, intensity):
-        np_image = np.array(image)
-        width = np_image.shape[1]
-        for i in range(width // 2):
-            if random.random() > (1 - intensity / 100.0):
-                np_image[:, i], np_image[:, width - i - 1] = np_image[:, width - i - 1], np_image[:, i]
         return Image.fromarray(np_image)
     
     def data_fragmentation(self, image, intensity):
@@ -284,45 +262,81 @@ class GlitchArtApp(QMainWindow):
                 np_image[:, i] = np.roll(np_image[:, i], offset, axis=0)
         return Image.fromarray(np_image)
     
-    def glitch_vertical_bars(self, image, intensity):
-        np_image = np.array(image)
-        width = np_image.shape[1]
-        bar_width = max(1, int(width * intensity / 100.0))
-        for i in range(0, width, bar_width):
-            if random.random() > (1 - intensity / 100.0):
-                np_image[:, i:i + bar_width] = np.random.randint(0, 256, (np_image.shape[0], bar_width, 3))
-        return Image.fromarray(np_image)
-    
-    def glitch_horizontal_bars(self, image, intensity):
-        np_image = np.array(image)
-        height = np_image.shape[0]
-        bar_height = max(1, int(height * intensity / 100.0))
-        for i in range(0, height, bar_height):
-            if random.random() > (1 - intensity / 100.0):
-                np_image[i:i + bar_height, :] = np.random.randint(0, 256, (bar_height, np_image.shape[1], 3))
-        return Image.fromarray(np_image)
-    
     def random_pixelation(self, image, intensity):
         np_image = np.array(image)
         height, width, _ = np_image.shape
-        pixelation_size = max(1, int(min(width, height) * intensity / 100.0))
-        for y in range(0, height, pixelation_size):
-            for x in range(0, width, pixelation_size):
-                if random.random() > (1 - intensity / 100.0):
-                    color = np_image[y:y + pixelation_size, x:x + pixelation_size].mean(axis=(0, 1))
-                    np_image[y:y + pixelation_size, x:x + pixelation_size] = color
+        pixel_size = random.randint(5, 20)  # Size of pixelation blocks
+        for i in range(0, width, pixel_size):
+            for j in range(0, height, pixel_size):
+                color = np_image[j:j+pixel_size, i:i+pixel_size].mean(axis=(0, 1))
+                np_image[j:j+pixel_size, i:i+pixel_size] = color
         return Image.fromarray(np_image)
     
+    def rgb_shift(self, image, intensity):
+        np_image = np.array(image)
+        height, width, _ = np_image.shape
+        shift = intensity // 10  # Shift amount based on intensity
+        r_shift = random.randint(-shift, shift)
+        g_shift = random.randint(-shift, shift)
+        b_shift = random.randint(-shift, shift)
+        r_channel = np.roll(np_image[:, :, 0], r_shift, axis=1)
+        g_channel = np.roll(np_image[:, :, 1], g_shift, axis=1)
+        b_channel = np.roll(np_image[:, :, 2], b_shift, axis=1)
+        np_image[:, :, 0] = r_channel
+        np_image[:, :, 1] = g_channel
+        np_image[:, :, 2] = b_channel
+        return Image.fromarray(np_image)
+    
+    def wave_distortion(self, image, intensity):
+        np_image = np.array(image)
+        height, width, _ = np_image.shape
+        for i in range(width):
+            offset = int(np.sin(i / 20.0) * intensity)
+            np_image[:, i] = np.roll(np_image[:, i], offset, axis=0)
+        return Image.fromarray(np_image)
+    
+    def glitch_strips(self, image, intensity):
+        np_image = np.array(image)
+        height, width, _ = np_image.shape
+        num_strips = max(1, int(width * intensity / 100))  # Garantir pelo menos 1 tira
+
+        min_width = 5
+        min_height = 5
+
+        for _ in range(num_strips):
+            x = random.randint(0, width - 1)
+            y = random.randint(0, height - 1)
+            
+            max_w = width - x
+            max_h = height - y
+            
+            if max_w <= min_width or max_h <= min_height:
+                continue
+            
+            w = random.randint(min_width, min(20, max_w))
+            h = random.randint(min_height, min(20, max_h))
+
+            # Verificar se o retângulo está dentro dos limites da imagem
+            x_end = min(x + w, width)
+            y_end = min(y + h, height)
+            
+            if x_end <= x or y_end <= y:
+                continue
+
+            np_image[y:y_end, x:x_end] = np.random.randint(0, 256, (y_end - y, x_end - x, 3), dtype=np.uint8)
+        
+        return Image.fromarray(np_image)
+
     def toggle_theme(self):
         if self.dark_mode:
-            self.setStyleSheet("background-color: #ffffff;")  # Light mode
-            self.scroll_area.setStyleSheet("background-color: #ffffff;")
-            self.image_widget.setStyleSheet("background-color: #ffffff; color: #000000;")
+            self.setStyleSheet("background-color: #ffffff;")
+            self.scroll_area.setStyleSheet("background-color: #e0e0e0;")
+            self.image_widget.setStyleSheet("background-color: #ffffff;")
             self.dark_mode = False
         else:
-            self.setStyleSheet("background-color: #1e1e1e;")  # Dark mode
+            self.setStyleSheet("background-color: #1e1e1e;")
             self.scroll_area.setStyleSheet("background-color: #1e1e1e;")
-            self.image_widget.setStyleSheet("background-color: #1e1e1e; color: #ffffff;")
+            self.image_widget.setStyleSheet("background-color: #1e1e1e;")
             self.dark_mode = True
 
 if __name__ == '__main__':
