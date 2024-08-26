@@ -1,5 +1,7 @@
 # Gliter 1.0 - Glitch Image Tool
+
 Para garantir a compatibilidade e a melhor experiência, é recomendável usar a versão mais recente do Python 3.x disponível.
+
 
 ---
 
@@ -14,18 +16,26 @@ Para garantir a compatibilidade e a melhor experiência, é recomendável usar a
 
 ## Instalação
 
-1. Clone:
+### Pré-requisitos
 
-   git clone https://github.com/mtzeus/gliter-sgit.git
-   
-   cd gliter-sgit
+- Python 3.7 ou superior
+- Pip (gerenciador de pacotes do Python)
 
-3. Install Requirements:
+### Passo a Passo
 
-  pip install -r requirements.txt
+1. Clone este repositório:
+```bash
+git clone https://github.com/mtzeus/gliter-sgit.git
+cd gliter-sgit
+```
 
-3. Execute:
-
-  python gliter.py
+2. Instale as dependências:
+```bash
+pip install -r requirements.txt
+```
+3. Execute o programa:
+```bash
+python gliter.py
+```
 
 
